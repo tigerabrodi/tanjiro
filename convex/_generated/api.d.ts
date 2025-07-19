@@ -14,7 +14,11 @@ import type {
   FunctionReference,
 } from "convex/server";
 import type * as auth from "../auth.js";
+import type * as chats_actions from "../chats/actions.js";
+import type * as chats_helpers from "../chats/helpers.js";
+import type * as chats_mutations from "../chats/mutations.js";
 import type * as chats_queries from "../chats/queries.js";
+import type * as edits_mutations from "../edits/mutations.js";
 import type * as error from "../error.js";
 import type * as http from "../http.js";
 import type * as lib_utils from "../lib/utils.js";
@@ -32,7 +36,11 @@ import type * as users_queries from "../users/queries.js";
  */
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
+  "chats/actions": typeof chats_actions;
+  "chats/helpers": typeof chats_helpers;
+  "chats/mutations": typeof chats_mutations;
   "chats/queries": typeof chats_queries;
+  "edits/mutations": typeof edits_mutations;
   error: typeof error;
   http: typeof http;
   "lib/utils": typeof lib_utils;

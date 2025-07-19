@@ -32,7 +32,7 @@ export default defineSchema({
     userPrompt: v.string(),
     inputImageId: v.id('_storage'), // the image that was edited
     outputImageId: v.id('_storage'), // the result from Gemini
-    aiResponseText: v.optional(v.string()), // Gemini's explanation
+    aiResponseText: v.string(), // Gemini's explanation
     createdAt: v.number(),
   }),
 })
