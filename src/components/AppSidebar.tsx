@@ -30,7 +30,11 @@ export function AppSidebar() {
         </div>
         <Separator className="my-2" />
       </SidebarHeader>
-      <SidebarContent>content</SidebarContent>
+      <SidebarContent>
+        <h2>Recent chats</h2>
+
+        <ul className="flex flex-col"></ul>
+      </SidebarContent>
       <SidebarFooter>footer</SidebarFooter>
     </Sidebar>
   )
