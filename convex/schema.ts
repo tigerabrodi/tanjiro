@@ -11,6 +11,12 @@ export default defineSchema({
   users: defineTable({
     email: v.string(),
     updatedAt: v.number(),
+    geminiApiKey: v.optional(
+      v.object({
+        encryptedKey: v.array(v.number()), // For encrypted Hume.ai API key storage
+        initializationVector: v.array(v.number()), // IV for encryption
+      })
+    ),
   }).index('by_email', ['email']),
 
   chats: defineTable({
