@@ -1,3 +1,4 @@
+import Logo from '@/assets/logo.png'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { ROUTES, TAB_VALUES } from '@/lib/constants'
@@ -37,8 +38,9 @@ export function LoginPage() {
     <div className="flex flex-1 items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="flex flex-col items-center gap-1">
-          <CardTitle className="text-primary flex items-center justify-center gap-2 text-center text-2xl">
-            Your app name...
+          <CardTitle className="text-primary flex items-center justify-center gap-4 text-center text-2xl">
+            Tanjiro
+            <img src={Logo} alt="Tanjiro" className="size-7" />
           </CardTitle>
         </CardHeader>
         <CardContent>
