@@ -14,6 +14,7 @@ import type {
   FunctionReference,
 } from "convex/server";
 import type * as auth from "../auth.js";
+import type * as chats_queries from "../chats/queries.js";
 import type * as http from "../http.js";
 import type * as users_queries from "../users/queries.js";
 
@@ -27,6 +28,7 @@ import type * as users_queries from "../users/queries.js";
  */
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
+  "chats/queries": typeof chats_queries;
   http: typeof http;
   "users/queries": typeof users_queries;
 }>;
