@@ -2,9 +2,16 @@ import Logo from '@/assets/logo.png'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Textarea } from '@/components/ui/textarea'
+import { ROUTES } from '@/lib/constants'
+import { handlePromise } from '@/lib/utils'
+import { api } from '@convex/_generated/api'
+import type { Id } from '@convex/_generated/dataModel'
+import { useAction, useMutation } from 'convex/react'
 import { Plus, Upload, X } from 'lucide-react'
 import { useCallback, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
+import { generatePath, useNavigate } from 'react-router'
+import { toast } from 'sonner'
 
 const TAB_KEYS = {
   UPLOAD: 'upload',
@@ -18,6 +25,16 @@ export function NewPage() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [tab, setTab] = useState<TabKey>(TAB_KEYS.UPLOAD)
+  const [isSubmittingPrompt, setIsSubmittingPrompt] = useState(false)
+
+  const createChatFromGeneration = useAction(
+    api.chats.actions.createChatFromGeneration
+  )
+  const createChatFromUpload = useAction(api.chats.actions.createChatFromUpload)
+
+  const generateUploadUrl = useMutation(api.chats.mutations.generateUploadUrl)
+
+  const navigate = useNavigate()
 
   const handleTabChange = (value: TabKey) => {
     setTab(value)
@@ -41,17 +58,69 @@ export function NewPage() {
     multiple: false,
   })
 
-  const handleSubmit = () => {
+  const uploadImage = async () => {
+    const postUrl = await generateUploadUrl()
+    const result = await fetch(postUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': selectedFile!.type },
+      body: selectedFile,
+    })
+
+    const { storageId } = (await result.json()) as { storageId: Id<'_storage'> }
+
+    return { storageId }
+  }
+
+  const handleSubmit = async () => {
     if (!prompt.trim() || !selectedFile) return
 
+    setIsSubmittingPrompt(true)
+
     const isUploadMode = tab === TAB_KEYS.UPLOAD
-    const isGenerateMode = tab === TAB_KEYS.GENERATE
+    if (isUploadMode) {
+      const [uploadImageError, uploadImageResult] =
+        await handlePromise(uploadImage())
 
-    // 1. Generating image means the generated image is the first message in the chat
+      if (uploadImageError) {
+        toast.error(uploadImageError.message)
+        return
+      }
 
-    // 2. Upload image + prompt means the uploaded image is the first message in the chat
+      const storageId = uploadImageResult.storageId
 
-    console.log('Uploading image:', selectedFile.name, 'with prompt:', prompt)
+      const [createChatFromUploadError, createChatFromUploadResult] =
+        await handlePromise(
+          createChatFromUpload({
+            storageId,
+            prompt,
+          })
+        )
+
+      if (createChatFromUploadError) {
+        toast.error(createChatFromUploadError.message)
+        return
+      }
+
+      const chatId = createChatFromUploadResult.chatId
+
+      void navigate(generatePath(ROUTES.chatDetail, { chatId }))
+    } else {
+      const [createChatFromGenerationError, createChatFromGenerationResult] =
+        await handlePromise(
+          createChatFromGeneration({
+            prompt,
+          })
+        )
+
+      if (createChatFromGenerationError) {
+        toast.error(createChatFromGenerationError.message)
+        return
+      }
+
+      const chatId = createChatFromGenerationResult.chatId
+
+      void navigate(generatePath(ROUTES.chatDetail, { chatId }))
+    }
   }
 
   const handleRemoveImage = () => {
@@ -65,12 +134,9 @@ export function NewPage() {
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
-      handleSubmit()
+      void handleSubmit()
     }
   }
-
-  const isUploading = false
-  const isGenerating = false
 
   return (
     <div className="flex flex-1 items-center justify-center p-8">
@@ -94,9 +160,9 @@ export function NewPage() {
         <Tabs
           defaultValue={tab}
           onValueChange={(value) => handleTabChange(value as TabKey)}
-          className="w-full"
+          className="w-full gap-7"
         >
-          <TabsList className="mb-6 grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value={TAB_KEYS.UPLOAD} className="gap-2">
               <Upload className="h-4 w-4" />
               Upload Image
@@ -107,7 +173,7 @@ export function NewPage() {
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value={TAB_KEYS.UPLOAD} className="flex flex-col gap-4">
+          <TabsContent value={TAB_KEYS.UPLOAD} className="flex flex-col gap-6">
             <div className="flex flex-col gap-4">
               <Textarea
                 placeholder="Describe what you want to do with your image... (e.g., 'Remove the background', 'Change the sky to sunset', 'Add a person wearing a red shirt')"
@@ -122,7 +188,7 @@ export function NewPage() {
                 <div className="border-border bg-muted/20 relative rounded-lg border-2 p-4">
                   <button
                     onClick={handleRemoveImage}
-                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90 absolute top-2 right-2 z-10 flex h-8 w-8 items-center justify-center rounded-full transition-colors"
+                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90 absolute top-2 right-2 z-10 flex size-6 items-center justify-center rounded-full transition-colors"
                   >
                     <X className="h-4 w-4" />
                   </button>
@@ -132,7 +198,7 @@ export function NewPage() {
                       alt="Preview"
                       className="bg-muted/10 h-48 w-full rounded-lg object-contain"
                     />
-                    <div className="text-muted-foreground text-sm">
+                    <div className="text-muted-foreground mx-auto flex flex-col items-center justify-center text-center text-sm">
                       <p className="font-medium">{selectedFile.name}</p>
                       <p>{(selectedFile.size / 1024 / 1024).toFixed(2)} MB</p>
                     </div>
@@ -148,16 +214,18 @@ export function NewPage() {
                   }`}
                 >
                   <input {...getInputProps()} />
-                  <div className="text-center">
-                    <Upload className="text-muted-foreground mx-auto mb-2 h-8 w-8" />
-                    <p className="text-muted-foreground mb-1 text-sm">
-                      {isDragActive
-                        ? 'Drop the image here...'
-                        : 'Click to upload or drag and drop'}
-                    </p>
-                    <p className="text-muted-foreground text-xs">
-                      PNG, JPG, GIF up to 10MB
-                    </p>
+                  <div className="flex flex-col items-center gap-2 text-center">
+                    <Upload className="text-muted-foreground mx-auto h-8 w-8" />
+                    <div className="flex flex-col gap-1">
+                      <p className="text-muted-foreground text-sm">
+                        {isDragActive
+                          ? 'Drop the image here...'
+                          : 'Click to upload or drag and drop'}
+                      </p>
+                      <p className="text-muted-foreground text-xs">
+                        PNG, JPG, GIF up to 10MB
+                      </p>
+                    </div>
                   </div>
                 </div>
               )}
@@ -167,8 +235,10 @@ export function NewPage() {
                 disabled={!prompt.trim() || !selectedFile}
                 className="h-12 w-full"
                 size="lg"
+                isLoading={isSubmittingPrompt}
+                loadingText="Processing..."
               >
-                {isUploading ? 'Processing...' : 'Upload & Start Editing'}
+                Upload & Start Editing
               </Button>
             </div>
           </TabsContent>
@@ -189,11 +259,13 @@ export function NewPage() {
 
               <Button
                 onClick={handleSubmit}
-                disabled={!prompt.trim() || isGenerating}
+                disabled={!prompt.trim()}
                 className="h-12 w-full"
                 size="lg"
+                isLoading={isSubmittingPrompt}
+                loadingText="Generating..."
               >
-                {isGenerating ? 'Generating...' : 'Generate & Start Editing'}
+                Generate & Start Editing
               </Button>
             </div>
           </TabsContent>
