@@ -15,6 +15,7 @@ import type {
 } from "convex/server";
 import type * as auth from "../auth.js";
 import type * as chats_queries from "../chats/queries.js";
+import type * as error from "../error.js";
 import type * as http from "../http.js";
 import type * as lib_utils from "../lib/utils.js";
 import type * as users_actions from "../users/actions.js";
@@ -32,6 +33,7 @@ import type * as users_queries from "../users/queries.js";
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   "chats/queries": typeof chats_queries;
+  error: typeof error;
   http: typeof http;
   "lib/utils": typeof lib_utils;
   "users/actions": typeof users_actions;
