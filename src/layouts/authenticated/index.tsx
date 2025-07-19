@@ -1,3 +1,5 @@
+import { AppSidebar } from '@/components/AppSidebar'
+import { SidebarProvider } from '@/components/ui/sidebar'
 import { ROUTES } from '@/lib/constants'
 import { api } from '@convex/_generated/api'
 import { useConvexAuth, useQuery } from 'convex/react'
@@ -25,5 +27,12 @@ export function AuthenticatedLayout() {
     )
   }
 
-  return <Outlet />
+  return (
+    <SidebarProvider>
+      <AppSidebar />
+      <main className="flex-1">
+        <Outlet />
+      </main>
+    </SidebarProvider>
+  )
 }

@@ -22,47 +22,47 @@ button {
 
 :root {
   --radius: 0.75rem;
-  
+
   /* Core backgrounds - Deep blue space */
   --background: oklch(0.20 0.042 264.695);
   --foreground: oklch(0.984 0.003 247.858);
-  
+
   /* UI surfaces - Better layering */
   --card: oklch(0.208 0.042 265.755);
   --card-foreground: oklch(0.984 0.003 247.858);
   --popover: oklch(0.208 0.042 265.755);
   --popover-foreground: oklch(0.984 0.003 247.858);
-  
+
   /* Primary - Purple instead of orange */
   --primary: oklch(0.65 0.15 270);
   --primary-foreground: oklch(0.984 0.003 247.858);
-  
+
   /* Secondary - Lighter than muted for better contrast */
   --secondary: oklch(0.35 0.045 265);
   --secondary-foreground: oklch(0.90 0.005 250);
-  
+
   /* Muted - Between secondary and card */
   --muted: oklch(0.28 0.041 260.031);
   --muted-foreground: oklch(0.704 0.04 256.788);
-  
+
   /* Accent - Brighter purple */
   --accent: oklch(0.70 0.18 275);
   --accent-foreground: oklch(0.129 0.042 264.695);
-  
+
   --destructive: oklch(0.704 0.191 22.216);
-  
+
   /* Better borders and inputs */
   --border: oklch(0.35 0.045 265);
   --input: oklch(0.25 0.035 265);
   --ring: oklch(0.65 0.15 270);
-  
+
   /* Charts - Purple spectrum */
   --chart-1: oklch(0.65 0.15 270);
   --chart-2: oklch(0.696 0.17 162.48);
   --chart-3: oklch(0.769 0.188 70.08);
   --chart-4: oklch(0.627 0.265 303.9);
   --chart-5: oklch(0.645 0.246 16.439);
-  
+
   /* Sidebar */
   --sidebar: oklch(0.208 0.042 265.755);
   --sidebar-foreground: oklch(0.984 0.003 247.858);
@@ -114,4 +114,15 @@ button {
   body {
     @apply bg-background text-foreground;
   }
+}
+
+.dark {
+  --sidebar: hsl(240 5.9% 10%);
+  --sidebar-foreground: hsl(240 4.8% 95.9%);
+  --sidebar-primary: hsl(224.3 76.3% 48%);
+  --sidebar-primary-foreground: hsl(0 0% 100%);
+  --sidebar-accent: hsl(240 3.7% 15.9%);
+  --sidebar-accent-foreground: hsl(240 4.8% 95.9%);
+  --sidebar-border: hsl(240 3.7% 15.9%);
+  --sidebar-ring: hsl(217.2 91.2% 59.8%);
 }

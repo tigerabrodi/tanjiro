@@ -22,7 +22,7 @@ export function LoginPage() {
 
   useEffect(() => {
     if (!isLoading && user) {
-      void navigate(generatePath(ROUTES.home))
+      void navigate(generatePath(ROUTES.new))
     }
   }, [isLoading, user, navigate])
 

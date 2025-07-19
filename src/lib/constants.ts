@@ -1,6 +1,6 @@
 export const ROUTES = {
   login: '/',
-  home: '/home',
+  new: '/new',
 } as const
 
 export const TAB_VALUES = {
