@@ -1,4 +1,4 @@
-import { AppSidebar } from '@/components/AppSidebar'
+import { AppSidebar } from '@/components/app-sidebar/AppSidebar'
 import { SidebarProvider } from '@/components/ui/sidebar'
 import { ROUTES } from '@/lib/constants'
 import { api } from '@convex/_generated/api'

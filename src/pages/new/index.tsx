@@ -232,7 +232,7 @@ export function NewPage() {
 
               <Button
                 onClick={handleSubmit}
-                disabled={!prompt.trim() || !selectedFile}
+                disabled={!prompt.trim() || !selectedFile || isSubmittingPrompt}
                 className="h-12 w-full"
                 size="lg"
                 isLoading={isSubmittingPrompt}
@@ -259,7 +259,7 @@ export function NewPage() {
 
               <Button
                 onClick={handleSubmit}
-                disabled={!prompt.trim()}
+                disabled={!prompt.trim() || isSubmittingPrompt}
                 className="h-12 w-full"
                 size="lg"
                 isLoading={isSubmittingPrompt}
