@@ -21,51 +21,57 @@ button {
 }
 
 :root {
-  --radius: 0.625rem;
+  --radius: 0.75rem;
   
-  /* Core backgrounds - Deep space with purple undertones */
-  --background: oklch(0.12 0.08 270);
-  --foreground: oklch(0.92 0.02 270);
+  /* Core backgrounds - Deep blue space */
+  --background: oklch(0.20 0.042 264.695);
+  --foreground: oklch(0.984 0.003 247.858);
   
-  /* UI surfaces - Cosmic depths */
-  --card: oklch(0.18 0.06 270);
-  --card-foreground: oklch(0.90 0.02 270);
-  --popover: oklch(0.18 0.06 270);
-  --popover-foreground: oklch(0.90 0.02 270);
+  /* UI surfaces - Better layering */
+  --card: oklch(0.208 0.042 265.755);
+  --card-foreground: oklch(0.984 0.003 247.858);
+  --popover: oklch(0.208 0.042 265.755);
+  --popover-foreground: oklch(0.984 0.003 247.858);
   
-  /* Brand colors - Galaxy purple spectrum */
-  --primary: oklch(0.75 0.18 290);
-  --primary-foreground: oklch(0.98 0.01 270);
+  /* Primary - Purple instead of orange */
+  --primary: oklch(0.65 0.15 270);
+  --primary-foreground: oklch(0.984 0.003 247.858);
   
-  /* Secondary actions - Purple-tinted */
-  --secondary: oklch(0.25 0.04 270);
-  --secondary-foreground: oklch(0.80 0.03 270);
+  /* Secondary - Lighter than muted for better contrast */
+  --secondary: oklch(0.35 0.045 265);
+  --secondary-foreground: oklch(0.90 0.005 250);
   
-  /* Muted elements - Purple-gray */
-  --muted: oklch(0.20 0.03 270);
-  --muted-foreground: oklch(0.60 0.02 270);
+  /* Muted - Between secondary and card */
+  --muted: oklch(0.28 0.041 260.031);
+  --muted-foreground: oklch(0.704 0.04 256.788);
   
-  /* Accent for highlights - Cosmic violet */
-  --accent: oklch(0.75 0.16 285);
-  --accent-foreground: oklch(0.98 0.01 270);
+  /* Accent - Brighter purple */
+  --accent: oklch(0.70 0.18 275);
+  --accent-foreground: oklch(0.129 0.042 264.695);
   
-  /* Status colors */
-  --destructive: oklch(0.65 0.15 15);
+  --destructive: oklch(0.704 0.191 22.216);
   
-  /* Borders and inputs - Purple glows */
-  --border: oklch(0.35 0.05 270);
-  --input: oklch(0.22 0.04 270);
-  --ring: oklch(0.80 0.20 285);
+  /* Better borders and inputs */
+  --border: oklch(0.35 0.045 265);
+  --input: oklch(0.25 0.035 265);
+  --ring: oklch(0.65 0.15 270);
   
-  /* Sidebar - Nebula depths */
-  --sidebar: oklch(0.15 0.06 270);
-  --sidebar-foreground: oklch(0.80 0.03 270);
-  --sidebar-primary: oklch(0.80 0.20 285);
-  --sidebar-primary-foreground: oklch(0.98 0.01 270);
-  --sidebar-accent: oklch(0.20 0.04 270);
-  --sidebar-accent-foreground: oklch(0.80 0.03 270);
-  --sidebar-border: oklch(0.25 0.05 270);
-  --sidebar-ring: oklch(0.80 0.20 285);
+  /* Charts - Purple spectrum */
+  --chart-1: oklch(0.65 0.15 270);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  
+  /* Sidebar */
+  --sidebar: oklch(0.208 0.042 265.755);
+  --sidebar-foreground: oklch(0.984 0.003 247.858);
+  --sidebar-primary: oklch(0.65 0.15 270);
+  --sidebar-primary-foreground: oklch(0.984 0.003 247.858);
+  --sidebar-accent: oklch(0.35 0.045 265);
+  --sidebar-accent-foreground: oklch(0.90 0.005 250);
+  --sidebar-border: oklch(0.35 0.045 265);
+  --sidebar-ring: oklch(0.65 0.15 270);
 }
 
 @theme inline {
