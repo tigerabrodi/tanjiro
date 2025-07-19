@@ -41,6 +41,11 @@ export function SettingsDialog({ isOpen, setIsOpen }: SettingsDialogProps) {
 
   useEffect(() => {
     if (isOpen) {
+      // Reset state when opening
+      setGeminiKey('')
+      setShowGeminiKey(false)
+      setIsLoadingGeminiKey(true)
+
       getGeminiApiKey()
         .then((key) => {
           setGeminiKey(key || '')
