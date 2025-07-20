@@ -1,7 +1,7 @@
 import { GoogleGenAI, Modality } from '@google/genai'
 import { api } from '../_generated/api'
-import { Id } from '../_generated/dataModel'
-import { ActionCtx } from '../_generated/server'
+import type { Id } from '../_generated/dataModel'
+import type { ActionCtx } from '../_generated/server'
 import { CustomConvexError } from '../error'
 
 async function getGeminiApiKey(ctx: ActionCtx) {

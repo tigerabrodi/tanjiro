@@ -36,7 +36,47 @@ export function ChatDetailPage() {
   const currentEdit = detailData?.currentEdit
 
   const addEditToChat = useAction(api.chats.actions.addEditToChat)
-  const navigateToIndex = useMutation(api.chats.mutations.navigateInChat)
+  const navigateToIndex = useMutation(
+    api.chats.mutations.navigateInChat
+  ).withOptimisticUpdate((localStore, { chatId, direction }) => {
+    const chat = localStore.getQuery(api.chats.queries.getChatDetail, {
+      chatId,
+    })
+    if (!chat) return
+
+    const currentIndex = chat.chat.currentEditIndex
+    let newIndex = currentIndex
+
+    if (direction === 'back' && newIndex > 0) {
+      newIndex--
+    } else if (
+      direction === 'forward' &&
+      newIndex < chat.chat.editHistory.length - 1
+    ) {
+      newIndex++
+    }
+
+    localStore.setQuery(
+      api.chats.queries.getChatDetail,
+      { chatId },
+      {
+        ...chat,
+        chat: {
+          ...chat.chat,
+          currentEditIndex: newIndex,
+        },
+        currentEdit: chat.edits[newIndex],
+        metadata: {
+          ...chat.metadata,
+          isOnLatest: newIndex === chat.chat.editHistory.length - 1,
+          position: {
+            current: newIndex + 1,
+            total: chat.chat.editHistory.length,
+          },
+        },
+      }
+    )
+  })
 
   // Cmd+Enter hotkey for auto-submission
   useHotkeys(
