@@ -11,6 +11,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar'
+import { usePrefetchQuery } from '@/hooks/usePrefetchQuery'
 import { ROUTES } from '@/lib/constants'
 import { cn } from '@/lib/utils'
 import { api } from '@convex/_generated/api'
@@ -32,6 +33,7 @@ import { UpdateTitleDialog } from './UpdateTitleDialog'
 
 export function AppSidebar() {
   const chats = useQuery(api.chats.queries.getUserChats)
+  const prefetchChatDetail = usePrefetchQuery(api.chats.queries.getChatDetail)
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
   const [titleDialogState, setTitleDialogState] = useState<{
     isOpen: boolean
@@ -75,6 +77,9 @@ export function AppSidebar() {
                     <ChatItem
                       key={chat._id}
                       chat={chat}
+                      onMouseEnter={() => {
+                        prefetchChatDetail({ chatId: chat._id })
+                      }}
                       onRename={({ chatId, currentTitle }) => {
                         setTitleDialogState({
                           isOpen: true,
@@ -123,15 +128,18 @@ export function AppSidebar() {
 function ChatItem({
   chat,
   onRename,
+  onMouseEnter,
 }: {
   chat: Doc<'chats'>
   onRename: (params: { chatId: Id<'chats'>; currentTitle: string }) => void
+  onMouseEnter: () => void
 }) {
   return (
     <SidebarMenuItem key={chat._id}>
       <SidebarMenuButton asChild>
         <NavLink
           to={generatePath(ROUTES.chatDetail, { chatId: chat._id })}
+          onMouseEnter={onMouseEnter}
           className={({ isActive }) =>
             cn(
               'flex items-center justify-between rounded-lg p-3 transition-colors',
