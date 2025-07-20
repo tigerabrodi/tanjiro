@@ -72,11 +72,13 @@ export function NewPage() {
   }
 
   const handleSubmit = async () => {
-    if (!prompt.trim() || !selectedFile) return
+    if (!prompt.trim()) return
+
+    const isUploadMode = tab === TAB_KEYS.UPLOAD
+    if (isUploadMode && !selectedFile) return
 
     setIsSubmittingPrompt(true)
 
-    const isUploadMode = tab === TAB_KEYS.UPLOAD
     if (isUploadMode) {
       const [uploadImageError, uploadImageResult] =
         await handlePromise(uploadImage())
