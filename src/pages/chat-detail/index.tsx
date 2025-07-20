@@ -172,7 +172,7 @@ export function ChatDetailPage() {
             />
           </div>
 
-          <div className="bg-card border-border flex max-h-[180px] w-full flex-col gap-2 rounded-b-lg border-x border-b px-4 py-5">
+          <div className="bg-card border-border flex h-[180px] w-full flex-col gap-2 rounded-b-lg border-x border-b px-4 py-5">
             <div className="mx-auto flex w-fit flex-col gap-4">
               <ChatMessage
                 icon={<UserIcon className="size-3" />}
