@@ -108,6 +108,7 @@ export const createChat = mutation({
       editHistory: [],
       currentEditIndex: args.currentEditIndex,
       createdAt: Date.now(),
+      isGenerating: false,
     })
   },
 })

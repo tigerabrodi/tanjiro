@@ -13,7 +13,7 @@ export default defineSchema({
     updatedAt: v.number(),
     geminiApiKey: v.optional(
       v.object({
-        encryptedKey: v.array(v.number()), // For encrypted Hume.ai API key storage
+        encryptedKey: v.array(v.number()), // For encrypted gemini API key storage
         initializationVector: v.array(v.number()), // IV for encryption
       })
     ),
@@ -25,6 +25,7 @@ export default defineSchema({
     editHistory: v.array(v.id('edits')), // linear sequence of edits
     currentEditIndex: v.number(), // which edit user is viewing (0, 1, 2...)
     createdAt: v.number(),
+    isGenerating: v.boolean(),
   }).index('by_user', ['userId']),
 
   edits: defineTable({

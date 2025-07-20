@@ -1,8 +1,12 @@
+import WandImg from '@/assets/wand.png'
+import { Button } from '@/components/ui/button'
+import { Textarea } from '@/components/ui/textarea'
 import { handlePromise } from '@/lib/utils'
 import { api } from '@convex/_generated/api'
 import type { Id } from '@convex/_generated/dataModel'
 import { useMutation, useQuery } from 'convex/react'
 import { BotIcon, UserIcon } from 'lucide-react'
+import { useState } from 'react'
 import { useParams } from 'react-router'
 import { toast } from 'sonner'
 import { ChatMessage } from './components/ChatMessage'
@@ -10,6 +14,7 @@ import { NavigationDots } from './components/NavigationDots'
 
 export function ChatDetailPage() {
   const { chatId } = useParams<{ chatId: string }>()
+  const [prompt, setPrompt] = useState('')
 
   const detailData = useQuery(api.chats.queries.getChatDetail, {
     chatId: chatId as Id<'chats'>,
@@ -30,12 +35,18 @@ export function ChatDetailPage() {
     }
   }
 
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    console.log('submit', prompt)
+  }
+
   const chat = detailData?.chat
+  const isOnLatest = detailData?.metadata.isOnLatest
   const currentEdit = detailData?.currentEdit
 
   return (
-    <div className="container mx-auto flex h-full w-full max-w-screen-2xl flex-col items-center gap-4 p-4">
-      <div className="bg-card border-border h-[50vh] w-full rounded-2xl border p-2">
+    <div className="container mx-auto flex h-full w-full max-w-screen-2xl flex-col items-center gap-4 p-8">
+      <div className="bg-card border-border h-[50vh] w-full max-w-[800px] rounded-2xl border p-2">
         <img
           src={currentEdit?.outputImageUrl ?? ''}
           alt={currentEdit?.aiResponseText}
@@ -43,7 +54,7 @@ export function ChatDetailPage() {
         />
       </div>
 
-      <div className="flex w-[600px] flex-col">
+      <div className="flex w-full max-w-[600px] flex-col">
         <div className="bg-card border-border w-full rounded-t-lg border py-2">
           <NavigationDots
             totalEdits={chat?.editHistory.length ?? 0}
@@ -69,6 +80,29 @@ export function ChatDetailPage() {
           </div>
         </div>
       </div>
+
+      <form
+        onSubmit={handleSubmit}
+        className="flex w-full max-w-[600px] items-center gap-2"
+      >
+        <Textarea
+          placeholder={
+            isOnLatest
+              ? "Describe how you'd like to edit this image..."
+              : 'Branch from this edit...'
+          }
+          className="max-h-[42px] min-h-[38px] flex-1 resize-none text-xs md:text-xs"
+          value={prompt}
+          onChange={(e) => setPrompt(e.target.value)}
+        />
+
+        <div className="h-full py-2.5">
+          <Button className="h-8 rounded-sm px-4 text-xs">
+            Generate
+            <img src={WandImg} alt="Wand" className="size-4" />
+          </Button>
+        </div>
+      </form>
     </div>
   )
 }
