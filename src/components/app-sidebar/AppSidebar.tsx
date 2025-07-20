@@ -28,6 +28,7 @@ import {
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu'
 import { Separator } from '../ui/separator'
+import { Skeleton } from '../ui/skeleton'
 import { SettingsDialog } from './SettingsDialog'
 import { UpdateTitleDialog } from './UpdateTitleDialog'
 
@@ -44,6 +45,8 @@ export function AppSidebar() {
     chatId: null,
     currentTitle: '',
   })
+
+  const isFetchingChats = chats === undefined
 
   return (
     <>
@@ -65,7 +68,9 @@ export function AppSidebar() {
           <Separator className="my-2" />
         </SidebarHeader>
         <SidebarContent>
-          {chats && chats.length > 0 ? (
+          {isFetchingChats ? (
+            <ChatListSkeleton />
+          ) : chats && chats.length > 0 ? (
             <SidebarGroup>
               <SidebarGroupLabel className="text-muted-foreground mb-2 pl-3 text-sm font-medium">
                 Recent Chats
@@ -122,6 +127,28 @@ export function AppSidebar() {
         currentTitle={titleDialogState.currentTitle}
       />
     </>
+  )
+}
+
+function ChatListSkeleton() {
+  return (
+    <SidebarGroup>
+      <SidebarGroupLabel className="text-muted-foreground mb-2 pl-3 text-sm font-medium">
+        Recent Chats
+      </SidebarGroupLabel>
+      <SidebarGroupContent>
+        <SidebarMenu className="flex flex-col gap-1">
+          {Array.from({ length: 3 }, (_, index) => (
+            <SidebarMenuItem key={index}>
+              <div className="flex items-center justify-between rounded-lg p-3">
+                <Skeleton className="h-2 w-20" />
+                <Skeleton className="h-2 w-4 rounded" />
+              </div>
+            </SidebarMenuItem>
+          ))}
+        </SidebarMenu>
+      </SidebarGroupContent>
+    </SidebarGroup>
   )
 }
 
