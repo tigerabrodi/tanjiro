@@ -1,19 +1,21 @@
+import { api } from '@convex/_generated/api'
+import type { Id } from '@convex/_generated/dataModel'
+import { useAction, useMutation, useQuery } from 'convex/react'
+import { BotIcon, UserIcon } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { useHotkeys } from 'react-hotkeys-hook'
+import { generatePath, useNavigate, useParams } from 'react-router'
+import { toast } from 'sonner'
+
+import { BranchingDialog } from './components/BranchingDialog'
+import { ChatMessage } from './components/ChatMessage'
+import { NavigationDots } from './components/NavigationDots'
+
 import WandImg from '@/assets/wand.png'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { ROUTES } from '@/lib/constants'
 import { handlePromise } from '@/lib/utils'
-import { api } from '@convex/_generated/api'
-import type { Id } from '@convex/_generated/dataModel'
-import { useAction, useMutation, useQuery } from 'convex/react'
-import { BotIcon, UserIcon } from 'lucide-react'
-import { useState } from 'react'
-import { useHotkeys } from 'react-hotkeys-hook'
-import { generatePath, useNavigate, useParams } from 'react-router'
-import { toast } from 'sonner'
-import { BranchingDialog } from './components/BranchingDialog'
-import { ChatMessage } from './components/ChatMessage'
-import { NavigationDots } from './components/NavigationDots'
 
 export const NEVER_SHOW_BRANCHING_DIALOG_KEY =
   'tanjiro-never-show-branching-dialog'
@@ -151,6 +153,17 @@ export function ChatDetailPage() {
     setIsSubmitting(false)
     setHasAcceptedBranching(false)
   }
+
+  useEffect(() => {
+    if (detailData?.edits) {
+      detailData.edits.forEach((edit) => {
+        if (edit.outputImageUrl) {
+          const img = new Image()
+          img.src = edit.outputImageUrl
+        }
+      })
+    }
+  }, [detailData?.edits])
 
   return (
     <>

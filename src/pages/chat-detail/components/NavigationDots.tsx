@@ -1,7 +1,8 @@
-import { Button } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { motion } from 'motion/react'
+
+import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 
 type NavigationDotsProps = {
   totalEdits: number

@@ -1,9 +1,3 @@
-import Logo from '@/assets/logo.png'
-import { Button } from '@/components/ui/button'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Textarea } from '@/components/ui/textarea'
-import { ROUTES } from '@/lib/constants'
-import { handlePromise } from '@/lib/utils'
 import { api } from '@convex/_generated/api'
 import type { Id } from '@convex/_generated/dataModel'
 import { useAction, useMutation } from 'convex/react'
@@ -12,6 +6,13 @@ import { useCallback, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { generatePath, useNavigate } from 'react-router'
 import { toast } from 'sonner'
+
+import Logo from '@/assets/logo.png'
+import { Button } from '@/components/ui/button'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Textarea } from '@/components/ui/textarea'
+import { ROUTES } from '@/lib/constants'
+import { handlePromise } from '@/lib/utils'
 
 const TAB_KEYS = {
   UPLOAD: 'upload',

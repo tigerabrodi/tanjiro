@@ -1,3 +1,5 @@
+import { useState } from 'react'
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -10,7 +12,6 @@ import {
 } from '@/components/ui/alert-dialog'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
-import { useState } from 'react'
 
 interface BranchingDialogProps {
   isOpen: boolean

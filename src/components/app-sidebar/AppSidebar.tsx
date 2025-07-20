@@ -1,3 +1,23 @@
+import { api } from '@convex/_generated/api'
+import type { Doc, Id } from '@convex/_generated/dataModel'
+import { useQuery } from 'convex/react'
+import { MoreHorizontal, Plus, Settings } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { generatePath, Link, NavLink, useParams } from 'react-router'
+
+import { Button } from '../ui/button'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '../ui/dropdown-menu'
+import { Separator } from '../ui/separator'
+import { Skeleton } from '../ui/skeleton'
+
+import { SettingsDialog } from './SettingsDialog'
+import { UpdateTitleDialog } from './UpdateTitleDialog'
+
 import Logo from '@/assets/logo.png'
 import {
   Sidebar,
@@ -14,28 +34,12 @@ import {
 import { usePrefetchQuery } from '@/hooks/usePrefetchQuery'
 import { ROUTES } from '@/lib/constants'
 import { cn } from '@/lib/utils'
-import { api } from '@convex/_generated/api'
-import type { Doc, Id } from '@convex/_generated/dataModel'
-import { useQuery } from 'convex/react'
-import { MoreHorizontal, Plus, Settings } from 'lucide-react'
-import { useState } from 'react'
-import { generatePath, Link, NavLink } from 'react-router'
-import { Button } from '../ui/button'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '../ui/dropdown-menu'
-import { Separator } from '../ui/separator'
-import { Skeleton } from '../ui/skeleton'
-import { SettingsDialog } from './SettingsDialog'
-import { UpdateTitleDialog } from './UpdateTitleDialog'
 
 export function AppSidebar() {
   const chats = useQuery(api.chats.queries.getUserChats)
   const prefetchChatDetail = usePrefetchQuery(api.chats.queries.getChatDetail)
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
+  const { chatId } = useParams<{ chatId: Id<'chats'> }>()
   const [titleDialogState, setTitleDialogState] = useState<{
     isOpen: boolean
     chatId: Id<'chats'> | null
@@ -47,6 +51,14 @@ export function AppSidebar() {
   })
 
   const isFetchingChats = chats === undefined
+
+  useEffect(() => {
+    if (chats) {
+      chats.forEach((chat) => {
+        prefetchChatDetail({ chatId: chat._id })
+      })
+    }
+  }, [chats, prefetchChatDetail])
 
   return (
     <>
@@ -82,9 +94,7 @@ export function AppSidebar() {
                     <ChatItem
                       key={chat._id}
                       chat={chat}
-                      onMouseEnter={() => {
-                        prefetchChatDetail({ chatId: chat._id })
-                      }}
+                      isActive={chat._id === chatId}
                       onRename={({ chatId, currentTitle }) => {
                         setTitleDialogState({
                           isOpen: true,
@@ -155,26 +165,23 @@ function ChatListSkeleton() {
 function ChatItem({
   chat,
   onRename,
-  onMouseEnter,
+  isActive,
 }: {
   chat: Doc<'chats'>
   onRename: (params: { chatId: Id<'chats'>; currentTitle: string }) => void
-  onMouseEnter: () => void
+  isActive: boolean
 }) {
   return (
     <SidebarMenuItem key={chat._id}>
       <SidebarMenuButton asChild>
         <NavLink
           to={generatePath(ROUTES.chatDetail, { chatId: chat._id })}
-          onMouseEnter={onMouseEnter}
-          className={({ isActive }) =>
-            cn(
-              'flex items-center justify-between rounded-lg p-3 transition-colors',
-              isActive
-                ? 'bg-sidebar-accent text-sidebar-accent-foreground'
-                : 'hover:bg-sidebar-accent/50 text-sidebar-foreground'
-            )
-          }
+          className={cn(
+            'flex items-center justify-between rounded-lg p-3 transition-colors',
+            isActive
+              ? 'bg-sidebar-accent text-sidebar-accent-foreground'
+              : 'hover:bg-sidebar-accent/50 text-sidebar-foreground'
+          )}
         >
           <p className="truncate text-sm font-medium">{chat.title}</p>
 

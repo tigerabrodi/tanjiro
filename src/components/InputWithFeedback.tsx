@@ -1,7 +1,8 @@
-import { Input } from '@/components/ui/input'
-import { cn } from '@/lib/utils'
 import { Loader2 } from 'lucide-react'
 import type { ComponentProps, ReactNode } from 'react'
+
+import { Input } from '@/components/ui/input'
+import { cn } from '@/lib/utils'
 
 type InputWithFeedbackProps = ComponentProps<typeof Input> & {
   errorMessage?: string

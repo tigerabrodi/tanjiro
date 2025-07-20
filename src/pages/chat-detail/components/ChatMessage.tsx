@@ -1,6 +1,7 @@
+import type { ReactNode } from 'react'
+
 import { ConditionalTooltip } from '@/components/ui/conditional-tooltip'
 import { cn } from '@/lib/utils'
-import type { ReactNode } from 'react'
 
 type ChatMessageProps = {
   icon: ReactNode

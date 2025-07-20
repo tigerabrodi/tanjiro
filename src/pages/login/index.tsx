@@ -1,14 +1,16 @@
-import Logo from '@/assets/logo.png'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { ROUTES, TAB_VALUES } from '@/lib/constants'
 import { api } from '@convex/_generated/api'
 import { useConvexAuth, useQuery } from 'convex/react'
 import { Loader2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { generatePath, useNavigate } from 'react-router'
+
 import { LoginForm } from './components/LoginForm'
 import { RegisterForm } from './components/RegisterForm'
+
+import Logo from '@/assets/logo.png'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { ROUTES, TAB_VALUES } from '@/lib/constants'
 
 export function LoginPage() {
   const [tab, setTab] = useState<

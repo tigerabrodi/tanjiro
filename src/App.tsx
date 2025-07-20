@@ -1,4 +1,5 @@
 import { BrowserRouter, Route, Routes } from 'react-router'
+
 import { AuthenticatedLayout } from './layouts/authenticated'
 import { ROUTES } from './lib/constants'
 import { ChatDetailPage } from './pages/chat-detail'
