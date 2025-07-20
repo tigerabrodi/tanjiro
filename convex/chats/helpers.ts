@@ -121,7 +121,7 @@ export async function editImageWithGemini({
 
   return {
     outputImageId: outputStorageId,
-    aiResponseText: aiResponseText,
+    aiResponseText: aiResponseText || 'Image edited successfully',
   }
 }
 
