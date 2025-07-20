@@ -51,6 +51,7 @@ export function BranchingDialog({
           <div className="flex w-full flex-col gap-4">
             <div className="flex items-center space-x-2">
               <Checkbox
+                className="bg-card border-2"
                 id="never-show-again"
                 checked={shouldNeverShowAgain}
                 onCheckedChange={(checked) =>
@@ -61,7 +62,7 @@ export function BranchingDialog({
                 Don&apos;t show this dialog again for any chats
               </Label>
             </div>
-            <div className="flex gap-2">
+            <div className="ml-auto flex gap-2">
               <AlertDialogCancel onClick={handleCancel}>
                 Cancel
               </AlertDialogCancel>
