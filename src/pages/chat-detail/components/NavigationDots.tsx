@@ -20,6 +20,7 @@ export function NavigationDots({
         size="sm"
         disabled={currentIndex === 0}
         className="h-6 w-6 p-0 disabled:opacity-30"
+        onClick={() => onNavigate({ index: currentIndex - 1 })}
       >
         <ChevronLeft className="h-3 w-3" />
       </Button>
@@ -47,6 +48,7 @@ export function NavigationDots({
         size="sm"
         disabled={currentIndex === totalEdits - 1}
         className="h-6 w-6 p-0 disabled:opacity-30"
+        onClick={() => onNavigate({ index: currentIndex + 1 })}
       >
         <ChevronRight className="h-3 w-3" />
       </Button>

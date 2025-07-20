@@ -8,6 +8,7 @@ import type { Id } from '@convex/_generated/dataModel'
 import { useAction, useMutation, useQuery } from 'convex/react'
 import { BotIcon, UserIcon } from 'lucide-react'
 import { useState } from 'react'
+import { useHotkeys } from 'react-hotkeys-hook'
 import { generatePath, useNavigate, useParams } from 'react-router'
 import { toast } from 'sonner'
 import { BranchingDialog } from './components/BranchingDialog'
@@ -37,6 +38,18 @@ export function ChatDetailPage() {
   const addEditToChat = useAction(api.chats.actions.addEditToChat)
   const navigateToIndex = useMutation(api.chats.mutations.navigateInChat)
 
+  // Cmd+Enter hotkey for auto-submission
+  useHotkeys(
+    'meta+enter',
+    (e) => {
+      e.preventDefault()
+      if (prompt.trim() && !isSubmitting) {
+        void handleSubmit()
+      }
+    },
+    { enableOnFormTags: true }
+  )
+
   const handleNavigateToIndex = async ({ index }: { index: number }) => {
     const [error] = await handlePromise(
       navigateToIndex({
@@ -50,8 +63,7 @@ export function ChatDetailPage() {
     }
   }
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
+  const handleSubmit = async () => {
     if (!prompt.trim() || isSubmitting) return
 
     const shouldNeverShowAgain =
@@ -120,13 +132,14 @@ export function ChatDetailPage() {
             />
           </div>
 
-          <div className="bg-card border-border flex w-full flex-col gap-2 rounded-b-lg border-x border-b px-4 py-5">
+          <div className="bg-card border-border flex max-h-[180px] w-full flex-col gap-2 rounded-b-lg border-x border-b px-4 py-5">
             <div className="mx-auto flex w-fit flex-col gap-4">
               <ChatMessage
                 icon={<UserIcon className="size-3" />}
                 label="You"
                 text={currentEdit?.userPrompt ?? ''}
                 iconContainerClassName="bg-muted text-muted-foreground"
+                shouldShowTooltip={false}
               />
               <ChatMessage
                 icon={<BotIcon className="size-3" />}
@@ -139,7 +152,10 @@ export function ChatDetailPage() {
         </div>
 
         <form
-          onSubmit={handleSubmit}
+          onSubmit={(e) => {
+            e.preventDefault()
+            void handleSubmit()
+          }}
           className="flex w-full max-w-[600px] items-center gap-2"
         >
           <Textarea
