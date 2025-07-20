@@ -94,7 +94,10 @@ export const addEditToChat = action({
     chatId: v.id('chats'),
     prompt: v.string(),
   },
-  handler: async (ctx, args): Promise<{ chatId: Id<'chats'> }> => {
+  handler: async (
+    ctx,
+    args
+  ): Promise<{ chatId: Id<'chats'>; isNewChat: boolean }> => {
     const userId = await getAuthUserId(ctx)
     if (!userId) {
       throw new ConvexError('Not authenticated')
@@ -114,11 +117,16 @@ export const addEditToChat = action({
 
     if (!isOnLatestEdit) {
       // Create new chat from current point
-      return await ctx.runAction(api.chats.actions.createChatFromEdit, {
-        originalChatId: args.chatId,
-        fromEditIndex: chat.chat.currentEditIndex,
-        newPrompt: args.prompt,
-      })
+      const { chatId } = await ctx.runAction(
+        api.chats.actions.createChatFromEdit,
+        {
+          originalChatId: args.chatId,
+          fromEditIndex: chat.chat.currentEditIndex,
+          newPrompt: args.prompt,
+        }
+      )
+
+      return { chatId, isNewChat: true }
     }
 
     // Get current image to edit
@@ -144,7 +152,7 @@ export const addEditToChat = action({
       editId: newEditId,
     })
 
-    return { chatId: args.chatId }
+    return { chatId: args.chatId, isNewChat: false }
   },
 })
 
