@@ -4,6 +4,7 @@ import { api } from '../_generated/api'
 import type { Id } from '../_generated/dataModel'
 import type { ActionCtx } from '../_generated/server'
 import { CustomConvexError } from '../error'
+import { handlePromise } from '../lib/utils'
 
 async function getGeminiApiKey(ctx: ActionCtx) {
   const apiKey = await ctx.runAction(api.users.actions.getGeminiApiKey, {})
@@ -22,7 +23,13 @@ export async function generateImageWithGemini({
   ctx: ActionCtx
   prompt: string
 }) {
-  const apiKey = await getGeminiApiKey(ctx)
+  const [getGeminiApiKeyError, apiKey] = await handlePromise(
+    getGeminiApiKey(ctx)
+  )
+  if (getGeminiApiKeyError) {
+    throw getGeminiApiKeyError
+  }
+
   const ai = new GoogleGenAI({ apiKey })
 
   const response = await ai.models.generateContent({
@@ -68,7 +75,13 @@ export async function editImageWithGemini({
   inputImageId: string
   prompt: string
 }) {
-  const apiKey = await getGeminiApiKey(ctx)
+  const [getGeminiApiKeyError, apiKey] = await handlePromise(
+    getGeminiApiKey(ctx)
+  )
+  if (getGeminiApiKeyError) {
+    throw getGeminiApiKeyError
+  }
+
   const ai = new GoogleGenAI({ apiKey })
 
   // Get input image
