@@ -194,6 +194,7 @@ export function NewPage() {
             <div className="flex flex-col gap-4">
               <Textarea
                 placeholder="Describe what you want to do with your image... (e.g., 'Remove the background', 'Change the sky to sunset', 'Add a person wearing a red shirt')"
+                disabled={isSubmittingPrompt}
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
                 onKeyDown={handleKeyDown}
@@ -262,6 +263,7 @@ export function NewPage() {
             <div className="flex flex-col gap-4">
               <Textarea
                 placeholder="Describe the image you want to generate... (e.g., 'A serene mountain landscape with a crystal-clear lake reflecting snow-capped peaks, surrounded by autumn trees')"
+                disabled={isSubmittingPrompt}
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
                 onKeyDown={handleKeyDown}
