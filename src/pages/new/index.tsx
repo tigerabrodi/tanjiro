@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Textarea } from '@/components/ui/textarea'
 import { ROUTES } from '@/lib/constants'
-import { handlePromise } from '@/lib/utils'
+import { getErrorMessage, handlePromise } from '@/lib/utils'
 
 const TAB_KEYS = {
   UPLOAD: 'upload',
@@ -28,9 +28,7 @@ export function NewPage() {
   const [tab, setTab] = useState<TabKey>(TAB_KEYS.UPLOAD)
   const [isSubmittingPrompt, setIsSubmittingPrompt] = useState(false)
 
-  const createChatFromGeneration = useAction(
-    api.chats.actions.createChatFromGeneration
-  )
+  const createChatFromGeneration = useAction(api.chats.actions.createChatFromGeneration)
   const createChatFromUpload = useAction(api.chats.actions.createChatFromUpload)
 
   const generateUploadUrl = useMutation(api.chats.mutations.generateUploadUrl)
@@ -60,14 +58,28 @@ export function NewPage() {
   })
 
   const uploadImage = async () => {
-    const postUrl = await generateUploadUrl()
-    const result = await fetch(postUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': selectedFile!.type },
-      body: selectedFile,
-    })
+    const [error, result] = await handlePromise(
+      (async () => {
+        const postUrl = await generateUploadUrl()
+        const response = await fetch(postUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': selectedFile!.type },
+          body: selectedFile,
+        })
 
-    const { storageId } = (await result.json()) as { storageId: Id<'_storage'> }
+        if (!response.ok) {
+          throw new Error('Failed to upload image.')
+        }
+
+        return (await response.json()) as { storageId: Id<'_storage'> }
+      })()
+    )
+
+    if (error) {
+      throw error
+    }
+
+    const { storageId } = result
 
     return { storageId }
   }
@@ -81,26 +93,31 @@ export function NewPage() {
     setIsSubmittingPrompt(true)
 
     if (isUploadMode) {
-      const [uploadImageError, uploadImageResult] =
-        await handlePromise(uploadImage())
+      const [uploadImageError, uploadImageResult] = await handlePromise(uploadImage())
 
       if (uploadImageError) {
-        toast.error(uploadImageError.message)
+        toast.error(
+          getErrorMessage({
+            error: uploadImageError,
+            fallbackText: 'Failed to upload image.',
+          })
+        )
+        setIsSubmittingPrompt(false)
         return
       }
 
       const storageId = uploadImageResult.storageId
 
-      const [createChatFromUploadError, createChatFromUploadResult] =
-        await handlePromise(
-          createChatFromUpload({
-            storageId,
-            prompt,
-          })
-        )
+      const [createChatFromUploadError, createChatFromUploadResult] = await handlePromise(
+        createChatFromUpload({
+          storageId,
+          prompt,
+        })
+      )
 
       if (createChatFromUploadError) {
-        toast.error(createChatFromUploadError.message)
+        toast.error(getErrorMessage({ error: createChatFromUploadError }))
+        setIsSubmittingPrompt(false)
         return
       }
 
@@ -108,15 +125,15 @@ export function NewPage() {
 
       void navigate(generatePath(ROUTES.chatDetail, { chatId }))
     } else {
-      const [createChatFromGenerationError, createChatFromGenerationResult] =
-        await handlePromise(
-          createChatFromGeneration({
-            prompt,
-          })
-        )
+      const [createChatFromGenerationError, createChatFromGenerationResult] = await handlePromise(
+        createChatFromGeneration({
+          prompt,
+        })
+      )
 
       if (createChatFromGenerationError) {
-        toast.error(createChatFromGenerationError.message)
+        toast.error(getErrorMessage({ error: createChatFromGenerationError }))
+        setIsSubmittingPrompt(false)
         return
       }
 
@@ -148,14 +165,11 @@ export function NewPage() {
           <img src={Logo} alt="Logo" className="mx-auto size-10" />
 
           <div className="flex flex-col gap-1 text-center">
-            <h1 className="text-foreground text-2xl font-semibold">
-              Start Editing with AI
-            </h1>
+            <h1 className="text-foreground text-2xl font-semibold">Start Editing with AI</h1>
 
             <p className="text-muted-foreground leading-relaxed">
-              Upload an image and chat with AI to make precise edits. Each
-              conversation creates a linear edit history you can navigate
-              through.
+              Upload an image and chat with AI to make precise edits. Each conversation creates a
+              linear edit history you can navigate through.
             </p>
           </div>
         </div>
@@ -225,9 +239,7 @@ export function NewPage() {
                           ? 'Drop the image here...'
                           : 'Click to upload or drag and drop'}
                       </p>
-                      <p className="text-muted-foreground text-xs">
-                        PNG, JPG, GIF up to 10MB
-                      </p>
+                      <p className="text-muted-foreground text-xs">PNG, JPG, GIF up to 10MB</p>
                     </div>
                   </div>
                 </div>
@@ -246,10 +258,7 @@ export function NewPage() {
             </div>
           </TabsContent>
 
-          <TabsContent
-            value={TAB_KEYS.GENERATE}
-            className="flex flex-col gap-4"
-          >
+          <TabsContent value={TAB_KEYS.GENERATE} className="flex flex-col gap-4">
             <div className="flex flex-col gap-4">
               <Textarea
                 placeholder="Describe the image you want to generate... (e.g., 'A serene mountain landscape with a crystal-clear lake reflecting snow-capped peaks, surrounded by autumn trees')"

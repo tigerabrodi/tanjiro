@@ -6,6 +6,7 @@ import { ConvexError, v } from 'convex/values'
 import { api } from '../_generated/api'
 import type { Doc, Id } from '../_generated/dataModel'
 import { action } from '../_generated/server'
+import { handlePromise } from '../lib/utils'
 
 import {
   createChatWithEdits,
@@ -65,24 +66,37 @@ export const createChatFromGeneration = action({
     }
 
     // Generate image with Gemini
-    const result = await generateImageWithGemini({
-      ctx,
-      prompt: args.prompt,
-    })
+    const [generateImageWithGeminiError, generateImageWithGeminiResult] =
+      await handlePromise(
+        generateImageWithGemini({
+          ctx,
+          prompt: args.prompt,
+        })
+      )
+
+    if (generateImageWithGeminiError) {
+      throw generateImageWithGeminiError
+    }
 
     // Create chat with generated image
-    const chatId = await createChatWithEdits({
-      ctx,
-      edits: [
-        {
-          userPrompt: args.prompt,
-          inputImageId: result.outputImageId, // For generation, input = output initially
-          outputImageId: result.outputImageId,
-          aiResponseText: result.aiResponseText,
-        },
-      ],
-      currentEditIndex: 0,
-    })
+    const [createChatWithEditsError, chatId] = await handlePromise(
+      createChatWithEdits({
+        ctx,
+        edits: [
+          {
+            userPrompt: args.prompt,
+            inputImageId: generateImageWithGeminiResult.outputImageId, // For generation, input = output initially
+            outputImageId: generateImageWithGeminiResult.outputImageId,
+            aiResponseText: generateImageWithGeminiResult.aiResponseText,
+          },
+        ],
+        currentEditIndex: 0,
+      })
+    )
+
+    if (createChatWithEditsError) {
+      throw createChatWithEditsError
+    }
 
     return { chatId }
   },

@@ -3,12 +3,11 @@
 import crypto from 'crypto'
 
 import { getAuthUserId } from '@convex-dev/auth/server'
-import { v } from 'convex/values'
+import { ConvexError, v } from 'convex/values'
 
 import { api, internal } from '../_generated/api'
 import { Doc } from '../_generated/dataModel'
 import { action } from '../_generated/server'
-import { CustomConvexError } from '../error'
 import { handlePromise } from '../lib/utils'
 
 const ALGORITHM = { name: 'AES-GCM', length: 256 }
@@ -35,16 +34,16 @@ export const storeGeminiApiKey = action({
   async handler(ctx, args) {
     const userId = await getAuthUserId(ctx)
     if (!userId) {
-      throw new CustomConvexError('User not authenticated')
+      throw new ConvexError('User not authenticated')
     }
 
     const [keyError, key] = await handlePromise(getEncryptionKey())
     if (keyError) {
-      throw new CustomConvexError('Failed to get encryption key')
+      throw new ConvexError('Failed to get encryption key')
     }
 
     if (!key) {
-      throw new CustomConvexError('Failed to get encryption key')
+      throw new ConvexError('Failed to get encryption key')
     }
 
     const initializationVector = crypto.getRandomValues(new Uint8Array(12))
@@ -58,11 +57,11 @@ export const storeGeminiApiKey = action({
     )
 
     if (encryptionError) {
-      throw new CustomConvexError('Failed to encrypt API key')
+      throw new ConvexError('Failed to encrypt API key')
     }
 
     if (!encrypted) {
-      throw new CustomConvexError('Failed to encrypt API key')
+      throw new ConvexError('Failed to encrypt API key')
     }
 
     await ctx.runMutation(api.users.mutations.updateUser, {
@@ -100,11 +99,11 @@ export const getGeminiApiKey = action({
     const [keyError, key] = await handlePromise(getEncryptionKey())
 
     if (keyError) {
-      throw new CustomConvexError('Failed to get encryption key')
+      throw new ConvexError('Failed to get encryption key')
     }
 
     if (!key) {
-      throw new CustomConvexError('Failed to get encryption key')
+      throw new ConvexError('Failed to get encryption key')
     }
 
     const [decryptionError, decrypted] = await handlePromise(
@@ -119,7 +118,7 @@ export const getGeminiApiKey = action({
     )
 
     if (decryptionError || !decrypted) {
-      throw new CustomConvexError('Failed to decrypt API key')
+      throw new ConvexError('Failed to decrypt API key')
     }
 
     return new TextDecoder().decode(decrypted)

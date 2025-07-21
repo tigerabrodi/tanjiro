@@ -1,5 +1,6 @@
 import { BrowserRouter, Route, Routes } from 'react-router'
 
+import { Toaster } from './components/ui/sonner'
 import { AuthenticatedLayout } from './layouts/authenticated'
 import { ROUTES } from './lib/constants'
 import { ChatDetailPage } from './pages/chat-detail'
@@ -16,6 +17,7 @@ export function App() {
           <Route path={ROUTES.chatDetail} element={<ChatDetailPage />} />
         </Route>
       </Routes>
+      <Toaster />
     </BrowserRouter>
   )
 }

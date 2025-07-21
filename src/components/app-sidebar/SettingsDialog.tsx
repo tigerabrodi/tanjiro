@@ -1,6 +1,6 @@
 import { api } from '@convex/_generated/api'
-import { CustomConvexError } from '@convex/error'
 import { useAction } from 'convex/react'
+import { ConvexError } from 'convex/values'
 import { Eye, EyeOff } from 'lucide-react'
 import { useActionState, useEffect, useState } from 'react'
 import { toast } from 'sonner'
@@ -74,8 +74,8 @@ export function SettingsDialog({ isOpen, setIsOpen }: SettingsDialogProps) {
       )
 
       if (geminiError) {
-        if (geminiError instanceof CustomConvexError) {
-          toast.error(geminiError.data)
+        if (geminiError instanceof ConvexError) {
+          toast.error(geminiError.data as string)
         } else {
           toast.error('Failed to store Gemini API key')
         }

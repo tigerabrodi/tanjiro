@@ -3,7 +3,6 @@ import { ConvexError, v } from 'convex/values'
 
 import type { Id } from '../_generated/dataModel'
 import { mutation } from '../_generated/server'
-import { CustomConvexError } from '../error'
 
 /**
  * Generate upload URL for file uploads
@@ -100,7 +99,7 @@ export const createChat = mutation({
   handler: async (ctx, args): Promise<Id<'chats'>> => {
     const userId = await getAuthUserId(ctx)
     if (!userId) {
-      throw new CustomConvexError('Not authenticated')
+      throw new ConvexError('Not authenticated')
     }
 
     return await ctx.db.insert('chats', {
