@@ -15,10 +15,9 @@ import WandImg from '@/assets/wand.png'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { ROUTES } from '@/lib/constants'
-import { handlePromise } from '@/lib/utils'
+import { cn, handlePromise } from '@/lib/utils'
 
-export const NEVER_SHOW_BRANCHING_DIALOG_KEY =
-  'tanjiro-never-show-branching-dialog'
+export const NEVER_SHOW_BRANCHING_DIALOG_KEY = 'tanjiro-never-show-branching-dialog'
 
 export function ChatDetailPage() {
   const { chatId } = useParams<{ chatId: string }>()
@@ -38,47 +37,44 @@ export function ChatDetailPage() {
   const currentEdit = detailData?.currentEdit
 
   const addEditToChat = useAction(api.chats.actions.addEditToChat)
-  const navigateToIndex = useMutation(
-    api.chats.mutations.navigateInChat
-  ).withOptimisticUpdate((localStore, { chatId, direction }) => {
-    const chat = localStore.getQuery(api.chats.queries.getChatDetail, {
-      chatId,
-    })
-    if (!chat) return
+  const navigateToIndex = useMutation(api.chats.mutations.navigateInChat).withOptimisticUpdate(
+    (localStore, { chatId, direction }) => {
+      const chat = localStore.getQuery(api.chats.queries.getChatDetail, {
+        chatId,
+      })
+      if (!chat) return
 
-    const currentIndex = chat.chat.currentEditIndex
-    let newIndex = currentIndex
+      const currentIndex = chat.chat.currentEditIndex
+      let newIndex = currentIndex
 
-    if (direction === 'back' && newIndex > 0) {
-      newIndex--
-    } else if (
-      direction === 'forward' &&
-      newIndex < chat.chat.editHistory.length - 1
-    ) {
-      newIndex++
-    }
-
-    localStore.setQuery(
-      api.chats.queries.getChatDetail,
-      { chatId },
-      {
-        ...chat,
-        chat: {
-          ...chat.chat,
-          currentEditIndex: newIndex,
-        },
-        currentEdit: chat.edits[newIndex],
-        metadata: {
-          ...chat.metadata,
-          isOnLatest: newIndex === chat.chat.editHistory.length - 1,
-          position: {
-            current: newIndex + 1,
-            total: chat.chat.editHistory.length,
-          },
-        },
+      if (direction === 'back' && newIndex > 0) {
+        newIndex--
+      } else if (direction === 'forward' && newIndex < chat.chat.editHistory.length - 1) {
+        newIndex++
       }
-    )
-  })
+
+      localStore.setQuery(
+        api.chats.queries.getChatDetail,
+        { chatId },
+        {
+          ...chat,
+          chat: {
+            ...chat.chat,
+            currentEditIndex: newIndex,
+          },
+          currentEdit: chat.edits[newIndex],
+          metadata: {
+            ...chat.metadata,
+            isOnLatest: newIndex === chat.chat.editHistory.length - 1,
+            position: {
+              current: newIndex + 1,
+              total: chat.chat.editHistory.length,
+            },
+          },
+        }
+      )
+    }
+  )
 
   // Cmd+Enter hotkey for auto-submission
   useHotkeys(
@@ -108,8 +104,7 @@ export function ChatDetailPage() {
   const handleSubmit = async () => {
     if (!prompt.trim() || isSubmitting) return
 
-    const shouldNeverShowAgain =
-      localStorage.getItem(NEVER_SHOW_BRANCHING_DIALOG_KEY) === 'true'
+    const shouldNeverShowAgain = localStorage.getItem(NEVER_SHOW_BRANCHING_DIALOG_KEY) === 'true'
 
     // If not on latest and haven't accepted branching for this session and haven't set "never show again"
     if (!isOnLatest && !hasAcceptedBranching && !shouldNeverShowAgain) {
@@ -230,7 +225,11 @@ export function ChatDetailPage() {
               disabled={!prompt.trim() || isSubmitting}
             >
               {isSubmitting ? 'Generating...' : 'Generate'}
-              <img src={WandImg} alt="Wand" className="size-4" />
+              <img
+                src={WandImg}
+                alt="Wand"
+                className={cn('size-4', isSubmitting && 'animate-float')}
+              />
             </Button>
           </div>
         </form>
